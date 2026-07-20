@@ -7,6 +7,7 @@
    ============================================================ */
 
 const STORAGE_KEY = "socPortfolioData_v1";
+const MANAGE_PASSCODE = "hina2026"; // change this to whatever you like — it's just a soft gate, not real security
 
 const STORE = {
   data: null,
@@ -55,6 +56,14 @@ document.addEventListener("DOMContentLoaded", () => {
    ============================================================ */
 function wireGlobalControls(){
   $("#manageToggle").addEventListener("click", () => {
+    if (!MANAGE_MODE) {
+      const code = prompt("Enter the manage passcode:");
+      if (code === null) return; // cancelled
+      if (code !== MANAGE_PASSCODE) {
+        alert("That's not correct — you don't have access to edit this site.");
+        return;
+      }
+    }
     MANAGE_MODE = !MANAGE_MODE;
     $("#manageToggle").classList.toggle("active", MANAGE_MODE);
     $("#manageBanner").hidden = !MANAGE_MODE;

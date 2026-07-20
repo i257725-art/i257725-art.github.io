@@ -16,7 +16,7 @@ window.SOC_SEED = {
     location: "Add your city",
     email: "you@example.com",
     github: "https://github.com/i257725-art",
-    linkedin: "https://linkedin.com/in/your-handle",
+    linkedin: "https://www.linkedin.com/in/imhinnakhan2001/",
     resumeUrl: "assets/resume.pdf",
     blogUrl: "#",
     about: "Every alert on this page started as a question I refused to leave unanswered. I've spent countless hours in isolated labs — deploying firewalls, standing up honeypots, dissecting malware samples, and writing detection rules line by line until they actually caught what they were meant to catch. This portfolio is proof of that work: not a résumé claim, but a running log of labs completed, incidents investigated, and rules that fire correctly. If you're reading this and wondering whether hands-on SOC skills can be built from scratch through sheer persistence — they can. This is what that looks like in progress.",
