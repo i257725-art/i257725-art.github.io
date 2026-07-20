@@ -294,16 +294,21 @@ function openReportForm(id){
     {key:"projectId", label:"Linked Project", type:"select", html:`<option value="">— None —</option>${projectOptions}`},
     {key:"date", label:"Date", value:existing?.date||"", placeholder:"e.g. 2026-07-20"},
     {key:"summary", label:"Summary / Findings", value:existing?.summary||"", type:"textarea"},
-    {key:"fileUrl", label:"Report file link (PDF / Drive / GitHub)", value:existing?.fileUrl||""},
+    {key:"reportFile", label:"Upload report file (PDF, image, doc)", type:"file", accept:".pdf,.doc,.docx,.png,.jpg,.jpeg", value: existing?.fileUrl && existing.fileIsUpload ? existing.fileUrl : "", fileName: existing?.fileName||""},
+    {key:"fileUrl", label:"...or paste a link instead (Google Drive, GitHub, etc.)", value: existing?.fileIsUpload ? "" : (existing?.fileUrl||"")},
     {key:"tags", label:"Tags (comma-separated)", value:(existing?.tags||[]).join(", ")},
   ], (vals) => {
+    const uploaded = vals.reportFile; // base64 data URL, or "" if nothing new chosen
+    const usingUpload = !!uploaded;
     const record = {
       id: existing?.id || uid("rep"),
       title: vals.title,
       projectId: vals.projectId || null,
       date: vals.date,
       summary: vals.summary,
-      fileUrl: vals.fileUrl,
+      fileUrl: usingUpload ? uploaded : (vals.fileUrl || ""),
+      fileIsUpload: usingUpload,
+      fileName: usingUpload ? (vals.reportFileName || "report file") : "",
       tags: vals.tags.split(",").map(s=>s.trim()).filter(Boolean)
     };
     if (existing) Object.assign(existing, record);
@@ -468,8 +473,33 @@ function openModal(title, fields, onSave){
         if (f.type === "select"){
           return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label><select id="${id}" data-key="${f.key}">${f.html}</select></div>`;
         }
+        if (f.type === "file"){
+          const currentNote = f.value ? `<p class="field-hint">Current file is attached. Choose a new one to replace it.</p>` : "";
+          return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label>
+            <input id="${id}" data-key="${f.key}" type="file" accept="${f.accept||""}">
+            ${currentNote}
+            <p class="field-hint">Keep files small (under ~2MB) — they're stored in this browser's local storage.</p>
+          </div>`;
+        }
         return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label><input id="${id}" data-key="${f.key}" type="text" value="${escapeHtml(f.value||"")}" placeholder="${escapeHtml(f.placeholder||"")}"></div>`;
       }).join("");
+
+      // wire up file inputs: read as base64 data URL as soon as a file is chosen
+      fields.filter(f => f.type === "file").forEach(f => {
+        const el = $("#f_" + f.key);
+        el.addEventListener("change", async () => {
+          const file = el.files[0];
+          if (!file) return;
+          if (file.size > 4 * 1024 * 1024) {
+            alert("That file is larger than 4MB. Please choose a smaller file, or link to it externally instead (e.g. Google Drive) using the URL field.");
+            el.value = "";
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => { el.dataset.fileData = reader.result; el.dataset.fileName = file.name; };
+          reader.readAsDataURL(file);
+        });
+      });
     }
   } catch(err){
     console.error("Modal render error:", err);
@@ -481,7 +511,13 @@ function openModal(title, fields, onSave){
     const vals = {};
     fields.forEach(f => {
       const el = $("#f_" + f.key);
-      vals[f.key] = el ? el.value : "";
+      if (!el) { vals[f.key] = ""; return; }
+      if (f.type === "file") {
+        vals[f.key] = el.dataset.fileData || f.value || "";
+        vals[f.key + "Name"] = el.dataset.fileName || f.fileName || "";
+      } else {
+        vals[f.key] = el.value;
+      }
     });
     onSave(vals);
     closeModal();
