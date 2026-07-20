@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOC Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ HEADER / NAV ============ -->
+<header class="site-header" id="top">
+  <div class="header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">SOC</span>
+      <span class="brand-name" id="brandName">Your Name</span>
+    </a>
+    <nav class="site-nav" id="siteNav">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#reports">SOC Reports</a>
+      <a href="#rules">Detection Rules</a>
+      <a href="#playbooks">Playbooks</a>
+      <a href="#certs">Certifications</a>
+    </nav>
+    <div class="header-actions">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">☰</button>
+      <button class="manage-toggle" id="manageToggle" title="Toggle manage mode">Manage</button>
+    </div>
+  </div>
+</header>
+
+<div class="manage-banner" id="manageBanner" hidden>
+  <span>Manage Mode is on — add / edit / delete controls are visible. Changes save to <em>this browser only</em>.</span>
+  <div class="manage-banner-actions">
+    <button id="exportBtn">Export Data (JSON)</button>
+    <button id="importBtn">Import Data (JSON)</button>
+    <button id="resetBtn" class="danger">Reset to Seed</button>
+  </div>
+</div>
+
+<!-- ============ HOME / HERO ============ -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <p class="eyebrow">Security Operations · Detection &amp; Response</p>
+    <h1 id="heroTitle">Your Name</h1>
+    <p class="hero-role" id="heroRole">SOC Analyst | Threat Detection &amp; Incident Response</p>
+    <p class="hero-tagline" id="heroTagline">Building detections, breaking labs, and documenting everything in between.</p>
+    <div class="hero-links">
+      <a class="btn btn-primary" id="resumeLink" href="#" target="_blank" rel="noopener">Download Résumé</a>
+      <a class="btn btn-ghost" id="githubLink" href="#" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-ghost" id="linkedinLink" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn btn-ghost" id="blogLink" href="#" target="_blank" rel="noopener">Blog</a>
+    </div>
+  </div>
+  <div class="hero-panel">
+    <div class="terminal">
+      <div class="terminal-bar"><span></span><span></span><span></span></div>
+      <div class="terminal-body">
+        <p><span class="t-prompt">soc@analyst</span><span class="t-sep">:~$</span> tail -f /var/log/wazuh/alerts.log</p>
+        <p class="t-out">[HIGH] Encoded PowerShell execution detected — T1059.001</p>
+        <p class="t-out">[MED]  5 failed logins in 60s from 10.10.14.22 — T1110</p>
+        <p class="t-out t-crit">[CRIT] New Administrator account created — T1136.001</p>
+        <p><span class="t-prompt">soc@analyst</span><span class="t-sep">:~$</span> <span class="t-cursor">▌</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <p class="section-eyebrow">01 — About</p>
+    <h2>Profile</h2>
+    <div class="about-grid">
+      <p class="about-text" id="aboutText">
+        I'm a cybersecurity student building hands-on SOC experience.
+      </p>
+      <div class="skills" id="skillsList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="section section-alt" id="projects">
+  <div class="section-inner">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-eyebrow">02 — Projects</p>
+        <h2>Lab Work &amp; Assignments</h2>
+      </div>
+      <button class="btn btn-add manage-only" id="addProjectBtn" hidden>+ Add Project</button>
+    </div>
+    <div class="project-grid" id="projectGrid"></div>
+  </div>
+</section>
+
+<!-- ============ SOC REPORTS ============ -->
+<section class="section" id="reports">
+  <div class="section-inner">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-eyebrow">03 — SOC Reports</p>
+        <h2>Reports Filed</h2>
+      </div>
+      <button class="btn btn-add manage-only" id="addReportBtn" hidden>+ Add Report</button>
+    </div>
+    <div class="report-list" id="reportList"></div>
+  </div>
+</section>
+
+<!-- ============ DETECTION RULES ============ -->
+<section class="section section-alt" id="rules">
+  <div class="section-inner">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-eyebrow">04 — Detection Rules</p>
+        <h2>Custom Wazuh Rules</h2>
+      </div>
+      <button class="btn btn-add manage-only" id="addRuleBtn" hidden>+ Add Rule</button>
+    </div>
+    <div class="rule-table-wrap">
+      <table class="rule-table" id="ruleTable">
+        <thead>
+          <tr>
+            <th>Rule</th><th>MITRE</th><th>Severity</th><th>Log Source</th><th>Status</th><th class="manage-only" hidden>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ruleTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PLAYBOOKS ============ -->
+<section class="section" id="playbooks">
+  <div class="section-inner">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-eyebrow">05 — Playbooks</p>
+        <h2>Incident Response Playbooks</h2>
+      </div>
+      <button class="btn btn-add manage-only" id="addPlaybookBtn" hidden>+ Add Playbook</button>
+    </div>
+    <div class="playbook-list" id="playbookList"></div>
+  </div>
+</section>
+
+<!-- ============ CERTIFICATIONS ============ -->
+<section class="section section-alt" id="certs">
+  <div class="section-inner">
+    <div class="section-heading-row">
+      <div>
+        <p class="section-eyebrow">06 — Certifications</p>
+        <h2>Certifications &amp; Badges</h2>
+      </div>
+      <button class="btn btn-add manage-only" id="addCertBtn" hidden>+ Add Certification</button>
+    </div>
+    <div class="cert-grid" id="certGrid"></div>
+    <p class="empty-note" id="certEmptyNote">No certifications added yet.</p>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <p class="footer-name" id="footerName">Your Name</p>
+      <p class="footer-tag">Security Operations Portfolio</p>
+    </div>
+    <div class="footer-links">
+      <a id="footerGithub" href="#" target="_blank" rel="noopener">GitHub</a>
+      <a id="footerLinkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a id="footerResume" href="#" target="_blank" rel="noopener">Résumé</a>
+      <a id="footerBlog" href="#" target="_blank" rel="noopener">Blog</a>
+    </div>
+    <button class="btn btn-ghost small manage-only" id="editProfileBtn" hidden>Edit Profile</button>
+  </div>
+  <p class="footer-copy">Built &amp; maintained on GitHub Pages.</p>
+</footer>
+
+<!-- ============ MODAL (shared, used for all add/edit forms) ============ -->
+<div class="modal-overlay" id="modalOverlay" hidden>
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3 id="modalTitle">Edit</h3>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modalCancel">Cancel</button>
+      <button class="btn btn-primary" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="importFileInput" accept="application/json" hidden>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
