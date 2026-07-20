@@ -181,8 +181,9 @@ function renderProjects(){
     const steps = (proj.steps && proj.steps.length)
       ? `<ol class="project-steps">${proj.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join("")}</ol>` : "";
     const htb = (proj.htbTable && proj.htbTable.length) ? renderHtbTable(proj.htbTable) : "";
+    const wideClass = (proj.htbTable && proj.htbTable.length) ? " project-card-wide" : "";
     return `
-      <div class="project-card" data-id="${proj.id}">
+      <div class="project-card${wideClass}" data-id="${proj.id}">
         <div class="project-card-top">
           <div>
             <p class="project-subtitle">${escapeHtml(proj.subtitle||"")}</p>
@@ -211,11 +212,11 @@ function renderProjects(){
 }
 
 function renderHtbTable(rows){
-  return `<table class="htb-mini-table"><thead><tr>
+  return `<div class="htb-table-scroll"><table class="htb-mini-table"><thead><tr>
     <th>Lab</th><th>Technique</th><th>ATT&CK</th><th>Investigation</th>
   </tr></thead><tbody>
     ${rows.map(r=>`<tr><td>${escapeHtml(r.lab)}</td><td>${escapeHtml(r.technique)}</td><td class="mono">${escapeHtml(r.attck)}</td><td>${escapeHtml(r.investigation)}</td></tr>`).join("")}
-  </tbody></table>`;
+  </tbody></table></div>`;
 }
 
 function openProjectForm(id){
@@ -454,23 +455,33 @@ function openCertForm(id){
 let currentSaveHandler = null;
 
 function openModal(title, fields, onSave){
-  $("#modalTitle").textContent = title;
-  $("#modalBody").innerHTML = fields.map(f => {
-    const id = "f_" + f.key;
-    if (f.type === "textarea"){
-      return `<div class="field"><label for="${id}">${f.label}</label><textarea id="${id}" data-key="${f.key}">${escapeHtml(f.value||"")}</textarea></div>`;
+  try {
+    $("#modalTitle").textContent = title || "Edit";
+    if (!fields || !fields.length){
+      $("#modalBody").innerHTML = `<p class="field-hint">Nothing to edit here yet.</p>`;
+    } else {
+      $("#modalBody").innerHTML = fields.map(f => {
+        const id = "f_" + f.key;
+        if (f.type === "textarea"){
+          return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label><textarea id="${id}" data-key="${f.key}">${escapeHtml(f.value||"")}</textarea></div>`;
+        }
+        if (f.type === "select"){
+          return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label><select id="${id}" data-key="${f.key}">${f.html}</select></div>`;
+        }
+        return `<div class="field"><label for="${id}">${escapeHtml(f.label)}</label><input id="${id}" data-key="${f.key}" type="text" value="${escapeHtml(f.value||"")}" placeholder="${escapeHtml(f.placeholder||"")}"></div>`;
+      }).join("");
     }
-    if (f.type === "select"){
-      return `<div class="field"><label for="${id}">${f.label}</label><select id="${id}" data-key="${f.key}">${f.html}</select></div>`;
-    }
-    return `<div class="field"><label for="${id}">${f.label}</label><input id="${id}" data-key="${f.key}" type="text" value="${escapeHtml(f.value||"")}" placeholder="${escapeHtml(f.placeholder||"")}"></div>`;
-  }).join("");
+  } catch(err){
+    console.error("Modal render error:", err);
+    $("#modalBody").innerHTML = `<p class="field-hint">Something went wrong opening this editor. Close this, refresh the page, and try again.</p>`;
+  }
 
   currentSaveHandler = () => {
+    if (!fields || !fields.length) { closeModal(); return; }
     const vals = {};
     fields.forEach(f => {
       const el = $("#f_" + f.key);
-      vals[f.key] = el.value;
+      vals[f.key] = el ? el.value : "";
     });
     onSave(vals);
     closeModal();
@@ -478,10 +489,16 @@ function openModal(title, fields, onSave){
 
   $("#modalSave").onclick = currentSaveHandler;
   $("#modalOverlay").hidden = false;
+  document.body.style.overflow = "hidden";
 }
 
 function closeModal(){
   $("#modalOverlay").hidden = true;
   $("#modalBody").innerHTML = "";
   currentSaveHandler = null;
+  document.body.style.overflow = "";
 }
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !$("#modalOverlay").hidden) closeModal();
+});
