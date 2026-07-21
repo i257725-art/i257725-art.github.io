@@ -11,10 +11,10 @@ window.SOC_SEED = {
 
   profile: {
     name: "Hina Khan",
-    title: "SOC Analyst | Threat Detection & Incident Response",
+    title: "Aspiring Cybersecurity Analyst | Malware Analysis & Network Security",
     tagline: "Building detections, breaking labs, and documenting everything in between.",
-    location: "Add your city",
-    email: "you@example.com",
+    location: "Islamabad, Pakistan",
+    email: "hinnakhan5704@gmail.com",
     github: "https://github.com/i257725-art",
     linkedin: "https://www.linkedin.com/in/imhinnakhan2001/",
     resumeUrl: "assets/resume.pdf",
@@ -22,8 +22,9 @@ window.SOC_SEED = {
     about: "Every alert on this page started as a question I refused to leave unanswered. I've spent countless hours in isolated labs — deploying firewalls, standing up honeypots, dissecting malware samples, and writing detection rules line by line until they actually caught what they were meant to catch. This portfolio is proof of that work: not a résumé claim, but a running log of labs completed, incidents investigated, and rules that fire correctly. If you're reading this and wondering whether hands-on SOC skills can be built from scratch through sheer persistence — they can. This is what that looks like in progress.",
     skills: [
       "Wazuh (SIEM/XDR)", "pfSense / OPNsense", "Malware Analysis",
-      "Incident Response", "MITRE ATT&CK Mapping", "Honeypot Deployment",
-      "Log Analysis", "Linux & Windows Forensics", "Detection Engineering"
+      "FLARE VM", "IDA Free / IDA Pro", "Ghidra", "Wireshark",
+      "Network Traffic Analysis", "Basic Reverse Engineering",
+      "Incident Response", "MITRE ATT&CK Mapping", "Honeypot Deployment"
     ]
   },
 

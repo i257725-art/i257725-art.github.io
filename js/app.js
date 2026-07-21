@@ -151,6 +151,9 @@ function renderProfile(){
   $("#linkedinLink").href = p.linkedin || "#";
   $("#blogLink").href = p.blogUrl || "#";
   $("#aboutText").textContent = p.about;
+  const contactBits = [p.location, p.email].filter(Boolean).join("  ·  ");
+  const contactEl = $("#aboutContact");
+  if (contactEl) contactEl.textContent = contactBits;
   $("#skillsList").innerHTML = (p.skills||[]).map(s => `<span class="skill-tag">${escapeHtml(s)}</span>`).join("");
   $("#footerName").textContent = p.name;
   $("#footerGithub").href = p.github || "#";
@@ -166,14 +169,19 @@ function openProfileForm(){
     {key:"title", label:"Title", value:p.title},
     {key:"tagline", label:"Tagline", value:p.tagline, type:"textarea"},
     {key:"about", label:"About", value:p.about, type:"textarea"},
+    {key:"location", label:"Location", value:p.location||""},
+    {key:"email", label:"Email", value:p.email||""},
     {key:"skills", label:"Skills (comma-separated)", value:(p.skills||[]).join(", ")},
     {key:"github", label:"GitHub URL", value:p.github},
     {key:"linkedin", label:"LinkedIn URL", value:p.linkedin},
-    {key:"resumeUrl", label:"Résumé URL", value:p.resumeUrl},
+    {key:"resumeFile", label:"Upload new résumé (PDF)", type:"file", accept:".pdf", value:""},
+    {key:"resumeUrl", label:"...or paste a résumé link instead", value:p.resumeUrl},
     {key:"blogUrl", label:"Blog URL", value:p.blogUrl},
   ], (vals) => {
     Object.assign(p, vals);
     p.skills = vals.skills.split(",").map(s=>s.trim()).filter(Boolean);
+    if (vals.resumeFile) { p.resumeUrl = vals.resumeFile; } // uploaded file wins if provided
+    delete p.resumeFile; delete p.resumeFileName;
     STORE.save(); renderProfile();
   });
 }
